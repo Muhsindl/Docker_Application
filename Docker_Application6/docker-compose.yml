@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  app:
+    image: muhsindolu/my-php-app:latest  # Docker Hub'dan çekecek
+    container_name: my_php_app
+    restart: always
+    ports:
+      - "8080:80"  # Apache'nin 80 portu, Nginx'e yönlendirilecek
+    volumes:
+      - ./app:/var/www/html  # PHP uygulaması dizini
+    depends_on:
+      - db  # DB servisi önce başlasın
+    environment:
+      DB_HOST: db
+      DB_USER: myuser
+      DB_PASSWORD: mypassword
+      DB_NAME: mydatabase
+
+  db:
+    image: mysql:8.0
+    container_name: my_mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+    ports:
+      - "3306:3306"  # MySQL'e erişim portu
+    volumes:
+      - db_data:/var/lib/mysql  # Veritabanı verilerini kalıcı hale getir
+
+  nginx:
+    image: nginx:latest
+    container_name: my_nginx
+    ports:
+      - "80:80"  # Dışa açık Nginx 80 portu
+    volumes:
+      - ./nginx:/etc/nginx/conf.d  # Nginx yapılandırma dosyasını bağla
+    depends_on:
+      - app  # Nginx, app servisi başlatıldıktan sonra başlar
+
+volumes:
+  db_data:
