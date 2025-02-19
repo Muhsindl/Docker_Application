@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  web:
+    build: .
+    container_name: php_apache_server
+    ports:
+      - "8080:80"
+    volumes:
+      - ./app:/var/www/html
+    networks:
+      - my_network
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: test_db
+      MYSQL_USER: testuser
+      MYSQL_PASSWORD: testpassword
+    volumes:
+      - db-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - my_network
+
+volumes:
+  db-data:
+
+networks:
+  my_network:
