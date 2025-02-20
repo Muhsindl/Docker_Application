@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  web:
+    container_name: my_web_container
+    build: .
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+
+  db:
+    container_name: my_db_container
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: todo_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
